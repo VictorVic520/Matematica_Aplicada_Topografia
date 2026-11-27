@@ -63,7 +63,6 @@ def input_angulo_topografico(label, default_deg, key_prefix):
 
 def dibujar_triangulo_topografico(a, b, c, A_deg, B_deg, C_deg):
     """Genera un croquis geométrico a escala del levantamiento."""
-    # Coordenadas: C en (0,0), B en (a, 0), A calculado por trigonometría
     C_rad = math.radians(C_deg)
     Ax = b * math.cos(C_rad)
     Ay = b * math.sin(C_rad)
@@ -75,8 +74,7 @@ def dibujar_triangulo_topografico(a, b, c, A_deg, B_deg, C_deg):
     ax.plot(xs, ys, "o-", color="#1f77b4", linewidth=2.2, markersize=7)
     ax.fill(xs, ys, color="#1f77b4", alpha=0.12)
 
-    # Etiquetas de vértices
-    offset = max(a, b, c) * 0.04
+    offset = max(a, b, c, 1.0) * 0.04
     ax.text(
         -offset, -offset, f"Estación C\n({C_deg:.1f}°)", fontweight="bold", ha="right"
     )
@@ -91,7 +89,6 @@ def dibujar_triangulo_topografico(a, b, c, A_deg, B_deg, C_deg):
         ha="center",
     )
 
-    # Etiquetas de lados
     ax.text(
         a / 2,
         -offset * 1.3,
@@ -130,9 +127,7 @@ def dibujar_triangulo_topografico(a, b, c, A_deg, B_deg, C_deg):
 # ENCABEZADO ACADÉMICO
 # ==========================================
 st.title("📐 Suite de Matemática Aplicada")
-st.markdown(
-    "**Producto Académico — Ciclo I: Topografía y Geodesia**"
-)
+st.markdown("**Producto Académico — Ciclo I: Topografía y Geodesia**")
 st.info(
     "Herramienta de cálculo para gabinete y campo: Proporcionalidad y Resolución de Triángulos Oblicuángulos."
 )
@@ -163,13 +158,24 @@ with tab1:
 
     col1, col2 = st.columns(2)
     with col1:
-        a_dir = st.number_input("Dato conocido (A)", value=4.0, step=0.1, key="a_dir")
-        c_dir = st.number_input("Dato a calcular (C)", value=14.5, step=0.1, key="c_dir")
+        a_dir = st.number_input(
+            "Dato conocido (A)", value=4.0, step=0.1, key="a_dir"
+        )
+        c_dir = st.number_input(
+            "Dato a calcular (C)", value=14.5, step=0.1, key="c_dir"
+        )
     with col2:
-        b_dir = st.number_input("Equivalencia (B)", value=100.0, step=1.0, key="b_dir")
-        st.text_input("Incógnita (X)", value="¿Cuánto vale X?", disabled=True)
+        b_dir = st.number_input(
+            "Equivalencia (B)", value=100.0, step=1.0, key="b_dir"
+        )
+        st.text_input(
+            "Incógnita (X)",
+            value="¿Cuánto vale X?",
+            disabled=True,
+            key="inc_dir",
+        )
 
-    if st.button("Calcular Directa", type="primary"):
+    if st.button("Calcular Directa", type="primary", key="btn_dir"):
         if a_dir == 0:
             st.error("El valor de A no puede ser cero.")
         else:
@@ -196,13 +202,24 @@ with tab2:
 
     col1, col2 = st.columns(2)
     with col1:
-        a_inv = st.number_input("Dato conocido (A)", value=3.0, step=1.0, key="a_inv")
-        c_inv = st.number_input("Nuevo valor (C)", value=4.0, step=1.0, key="c_inv")
+        a_inv = st.number_input(
+            "Dato conocido (A)", value=3.0, step=1.0, key="a_inv"
+        )
+        c_inv = st.number_input(
+            "Nuevo valor (C)", value=4.0, step=1.0, key="c_inv"
+        )
     with col2:
-        b_inv = st.number_input("Recurso inicial (B)", value=12.0, step=1.0, key="b_inv")
-        st.text_input("Incógnita (X)", value="¿Cuánto vale X?", disabled=True)
+        b_inv = st.number_input(
+            "Recurso inicial (B)", value=12.0, step=1.0, key="b_inv"
+        )
+        st.text_input(
+            "Incógnita (X)",
+            value="¿Cuánto vale X?",
+            disabled=True,
+            key="inc_inv",
+        )
 
-    if st.button("Calcular Inversa", type="primary"):
+    if st.button("Calcular Inversa", type="primary", key="btn_inv"):
         if c_inv == 0:
             st.error("El valor de C no puede ser cero.")
         else:
@@ -227,16 +244,22 @@ with tab3:
     c1, c2, c3 = st.columns(3)
     a1 = c1.number_input("Magnitud 1 Inicial (A1)", value=2.0, key="a1")
     a2 = c2.number_input("Magnitud 1 Final (A2)", value=3.0, key="a2")
-    rel_a = c3.selectbox("Relación A con X", ["Directa", "Inversa"], key="rel_a")
+    rel_a = c3.selectbox(
+        "Relación A con X", ["Directa", "Inversa"], key="rel_a"
+    )
 
     c4, c5, c6 = st.columns(3)
     b1 = c4.number_input("Magnitud 2 Inicial (B1)", value=8.0, key="b1")
     b2 = c5.number_input("Magnitud 2 Final (B2)", value=6.0, key="b2")
-    rel_b = c6.selectbox("Relación B con X", ["Directa", "Inversa"], key="rel_b")
+    rel_b = c6.selectbox(
+        "Relación B con X", ["Directa", "Inversa"], key="rel_b"
+    )
 
-    x1 = st.number_input("Valor conocido de la incógnita (X1)", value=40.0, key="x1")
+    x1 = st.number_input(
+        "Valor conocido de la incógnita (X1)", value=40.0, key="x1"
+    )
 
-    if st.button("Calcular Compuesta", type="primary"):
+    if st.button("Calcular Compuesta", type="primary", key="btn_comp"):
         if (
             (rel_a == "Directa" and a1 == 0)
             or (rel_a == "Inversa" and a2 == 0)
@@ -262,7 +285,7 @@ with tab4:
 
     with st.expander("📌 Caso Práctico: Método de Radiación desde Estación C"):
         st.write(
-            "Estacionamos el equipo en el punto **C**. Visamos el punto **B** a una distancia $a = 125.40\text{ m}$ y el punto **A** a $b = 98.60\text{ m}$, midiendo un ángulo horizontal interno $C = 64.5^\circ$. Calcula la distancia inaccesible $c$ entre **A** y **B**, los ángulos restantes y el área del predio."
+            "Estacionamos el equipo en el punto **C**. Visamos el punto **B** a una distancia $a = 125.40\\text{ m}$ y el punto **A** a $b = 98.60\\text{ m}$, midiendo un ángulo horizontal interno $C = 64.5^\\circ$. Calcula la distancia inaccesible $c$ entre **A** y **B**, los ángulos restantes y el área del predio."
         )
 
     caso_cos = st.selectbox(
@@ -271,25 +294,37 @@ with tab4:
             "Caso 1: Dos lados y el ángulo comprendido (LAL) → Hallar lado opuesto",
             "Caso 2: Tres lados conocidos (LLL) → Hallar ángulos internos (Trilateración)",
         ],
+        key="caso_cos_select",
     )
 
     if "Caso 1" in caso_cos:
         col1, col2 = st.columns(2)
         lado_a = col1.number_input(
-            "Distancia CB - Lado a (m)", min_value=0.01, value=125.40, step=1.0
+            "Distancia CB - Lado a (m)",
+            min_value=0.01,
+            value=125.40,
+            step=1.0,
+            key="cos_c1_a",
         )
         lado_b = col2.number_input(
-            "Distancia CA - Lado b (m)", min_value=0.01, value=98.60, step=1.0
+            "Distancia CA - Lado b (m)",
+            min_value=0.01,
+            value=98.60,
+            step=1.0,
+            key="cos_c1_b",
         )
-        ang_C = input_angulo_topografico("Ángulo horizontal C", 64.5, "cos_c")
+        ang_C = input_angulo_topografico(
+            "Ángulo horizontal C", 64.5, "cos_c1_ang"
+        )
 
-        if st.button("Resolver Triángulo (Cosenos)", type="primary"):
+        if st.button(
+            "Resolver Triángulo (Cosenos)", type="primary", key="btn_cos_c1"
+        ):
             C_rad = math.radians(ang_C)
             lado_c = math.sqrt(
                 lado_a**2 + lado_b**2 - 2 * lado_a * lado_b * math.cos(C_rad)
             )
 
-            # Cálculo de los ángulos restantes usando ley de cosenos inversa para evitar ambigüedad
             cos_A = (lado_b**2 + lado_c**2 - lado_a**2) / (2 * lado_b * lado_c)
             ang_A = math.degrees(math.acos(max(-1.0, min(1.0, cos_A))))
             ang_B = 180.0 - ang_A - ang_C
@@ -300,29 +335,38 @@ with tab4:
                 rf"c = \sqrt{{{lado_a}^2 + {lado_b}^2 - 2({lado_a})({lado_b})\cos({ang_C:.2f}^\circ)}} = {lado_c:.4f}\text{{ m}}"
             )
 
-            # Resumen de libreta de campo
             st.markdown("#### 📋 Resumen de Libreta Topográfica:")
             m1, m2, m3 = st.columns(3)
             m1.metric("Ángulo A", f"{ang_A:.3f}°", deg_to_dms_str(ang_A))
             m2.metric("Ángulo B", f"{ang_B:.3f}°", deg_to_dms_str(ang_B))
-            m3.metric("Superficie", f"{area_m2:.2f} m²", f"{area_m2/10000:.4f} ha")
+            m3.metric(
+                "Superficie", f"{area_m2:.2f} m²", f"{area_m2/10000:.4f} ha"
+            )
 
             fig = dibujar_triangulo_topografico(
                 lado_a, lado_b, lado_c, ang_A, ang_B, ang_C
             )
             st.pyplot(fig)
+            plt.close(fig)
 
     else:
         st.write(
             "Ideal cuando solo cuentas con cinta métrica o distanciómetro (Trilateración)."
         )
         c1, c2, c3 = st.columns(3)
-        lado_a = c1.number_input("Lado a (m)", min_value=0.01, value=120.0, key="lll_a")
-        lado_b = c2.number_input("Lado b (m)", min_value=0.01, value=100.0, key="lll_b")
-        lado_c = c3.number_input("Lado c (m)", min_value=0.01, value=115.0, key="lll_c")
+        lado_a = c1.number_input(
+            "Lado a (m)", min_value=0.01, value=120.0, key="lll_a"
+        )
+        lado_b = c2.number_input(
+            "Lado b (m)", min_value=0.01, value=100.0, key="lll_b"
+        )
+        lado_c = c3.number_input(
+            "Lado c (m)", min_value=0.01, value=115.0, key="lll_c"
+        )
 
-        if st.button("Calcular Ángulos (Trilateración)", type="primary"):
-            # Verificar desigualdad triangular
+        if st.button(
+            "Calcular Ángulos (Trilateración)", type="primary", key="btn_cos_c2"
+        ):
             if (
                 (lado_a + lado_b <= lado_c)
                 or (lado_a + lado_c <= lado_b)
@@ -332,16 +376,21 @@ with tab4:
                     "⚠️ Error Geométrico: Los lados ingresados no pueden formar un triángulo cerrado (la suma de dos lados debe ser mayor al tercero)."
                 )
             else:
-                ang_A = math.degrees(
-                    math.acos((lado_b**2 + lado_c**2 - lado_a**2) / (2 * lado_b * lado_c))
+                cos_A = (lado_b**2 + lado_c**2 - lado_a**2) / (
+                    2 * lado_b * lado_c
                 )
-                ang_B = math.degrees(
-                    math.acos((lado_a**2 + lado_c**2 - lado_b**2) / (2 * lado_a * lado_c))
+                cos_B = (lado_a**2 + lado_c**2 - lado_b**2) / (
+                    2 * lado_a * lado_c
                 )
+                ang_A = math.degrees(math.acos(max(-1.0, min(1.0, cos_A))))
+                ang_B = math.degrees(math.acos(max(-1.0, min(1.0, cos_B))))
                 ang_C = 180.0 - ang_A - ang_B
                 s_semi = (lado_a + lado_b + lado_c) / 2
                 area_m2 = math.sqrt(
-                    s_semi * (s_semi - lado_a) * (s_semi - lado_b) * (s_semi - lado_c)
+                    s_semi
+                    * (s_semi - lado_a)
+                    * (s_semi - lado_b)
+                    * (s_semi - lado_c)
                 )
 
                 st.success("### Triángulo cerrado correctamente")
@@ -357,6 +406,7 @@ with tab4:
                     lado_a, lado_b, lado_c, ang_A, ang_B, ang_C
                 )
                 st.pyplot(fig)
+                plt.close(fig)
 
 # ==========================================
 # PESTAÑA 5: LEY DE SENOS (TRIANGULACIÓN GEODÉSICA)
@@ -370,7 +420,7 @@ with tab5:
 
     with st.expander("📌 Caso Práctico: Intersección Directa hacia un Hito Inaccesible"):
         st.write(
-            "Se mide una línea base $c = 250.00\text{ m}$ entre las estaciones **A** y **B**. Desde **A** se mide el ángulo $A = 52^\circ$ hacia un hito **C** al otro lado de un barranco, y desde **B** se mide $B = 68^\circ$. Halla las distancias $a$ y $b$ hacia el hito."
+            "Se mide una línea base $c = 250.00\\text{ m}$ entre las estaciones **A** y **B**. Desde **A** se mide el ángulo $A = 52^\\circ$ hacia un hito **C** al otro lado de un barranco, y desde **B** se mide $B = 68^\\circ$. Halla las distancias $a$ y $b$ hacia el hito."
         )
 
     lado_base_c = st.number_input(
@@ -383,11 +433,17 @@ with tab5:
 
     col1, col2 = st.columns(2)
     with col1:
-        ang_A_sen = input_angulo_topografico("Ángulo en Estación A", 52.0, "sen_a")
+        ang_A_sen = input_angulo_topografico(
+            "Ángulo en Estación A", 52.0, "sen_a"
+        )
     with col2:
-        ang_B_sen = input_angulo_topografico("Ángulo en Estación B", 68.0, "sen_b")
+        ang_B_sen = input_angulo_topografico(
+            "Ángulo en Estación B", 68.0, "sen_b"
+        )
 
-    if st.button("Resolver Triangulación (Senos)", type="primary"):
+    if st.button(
+        "Resolver Triangulación (Senos)", type="primary", key="btn_sen"
+    ):
         if ang_A_sen + ang_B_sen >= 180.0:
             st.error(
                 f"⚠️ Error Geométrico: La suma de los ángulos A + B ({ang_A_sen + ang_B_sen:.2f}°) debe ser menor a 180° para que las visuales se crucen."
@@ -396,8 +452,12 @@ with tab5:
             ang_C_sen = 180.0 - (ang_A_sen + ang_B_sen)
             sin_C = math.sin(math.radians(ang_C_sen))
 
-            lado_a_sen = (lado_base_c * math.sin(math.radians(ang_A_sen))) / sin_C
-            lado_b_sen = (lado_base_c * math.sin(math.radians(ang_B_sen))) / sin_C
+            lado_a_sen = (
+                lado_base_c * math.sin(math.radians(ang_A_sen))
+            ) / sin_C
+            lado_b_sen = (
+                lado_base_c * math.sin(math.radians(ang_B_sen))
+            ) / sin_C
             area_sen = 0.5 * lado_a_sen * lado_b_sen * sin_C
 
             st.success(
@@ -412,9 +472,15 @@ with tab5:
 
             st.markdown("#### 📋 Resumen de Libreta Topográfica:")
             m1, m2, m3 = st.columns(3)
-            m1.metric("Ángulo C (Cierre)", f"{ang_C_sen:.3f}°", deg_to_dms_str(ang_C_sen))
-            m2.metric("Perímetro", f"{lado_a_sen + lado_b_sen + lado_base_c:.2f} m")
-            m3.metric("Superficie", f"{area_sen:.2f} m²", f"{area_sen/10000:.4f} ha")
+            m1.metric(
+                "Ángulo C (Cierre)", f"{ang_C_sen:.3f}°", deg_to_dms_str(ang_C_sen)
+            )
+            m2.metric(
+                "Perímetro", f"{lado_a_sen + lado_b_sen + lado_base_c:.2f} m"
+            )
+            m3.metric(
+                "Superficie", f"{area_sen:.2f} m²", f"{area_sen/10000:.4f} ha"
+            )
 
             fig = dibujar_triangulo_topografico(
                 lado_a_sen,
@@ -425,6 +491,7 @@ with tab5:
                 ang_C_sen,
             )
             st.pyplot(fig)
+            plt.close(fig)
 
 # ==========================================
 # PIE DE PÁGINA
@@ -432,5 +499,5 @@ with tab5:
 st.divider()
 st.caption(
     "Desarrollado con Python, Streamlit y Matplotlib • Curso de Matemática Aplicada • Topografía y Geodesia"
-  )
-  
+    )
+        
